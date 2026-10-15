@@ -1,0 +1,57 @@
+{
+  "name": "fovea",
+  "displayName": "Fovea",
+  "description": "A color scheme informed by vision research: three variants built from one OKLCH palette, each checked against a contrast budget.",
+  "version": "0.1.0",
+  "publisher": "PLACEHOLDER-publisher",
+  "license": "MIT",
+  "private": true,
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#171411",
+    "theme": "dark"
+  },
+  "homepage": "https://natewave.github.io/fovea/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/natewave/fovea.git"
+  },
+  "bugs": {
+    "url": "https://github.com/natewave/fovea/issues"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "keywords": [
+    "theme",
+    "color theme",
+    "light theme",
+    "dark theme",
+    "warm",
+    "accessibility",
+    "contrast",
+    "low light"
+  ],
+  "contributes": {
+    "themes": [
+      {
+        "label": "Fovea Day",
+        "uiTheme": "vs",
+        "path": "./themes/fovea-day-color-theme.json"
+      },
+      {
+        "label": "Fovea Dusk",
+        "uiTheme": "vs-dark",
+        "path": "./themes/fovea-dusk-color-theme.json"
+      },
+      {
+        "label": "Fovea Night",
+        "uiTheme": "vs-dark",
+        "path": "./themes/fovea-night-color-theme.json"
+      }
+    ]
+  }
+}

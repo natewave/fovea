@@ -1,0 +1,49 @@
+---
+import { project } from "@fovea/build/project";
+import { url } from "../lib/paths.ts";
+---
+
+<footer class="site-footer">
+  <div class="wrap cols">
+    <div>
+      <p>
+        <strong>Fovea</strong> is a color scheme informed by vision research, released under the MIT license.
+        It is not medical advice; for eye symptoms, see an eye-care professional.
+      </p>
+      <p class="muted">
+        No analytics, cookies or third-party requests. Your variant choice is stored only in this browser.
+        Text is set in Atkinson Hyperlegible Next and Mono, self-hosted under the SIL Open Font License.
+      </p>
+    </div>
+    <ul>
+      <li><a href={project.repository}>Source code</a></li>
+      <li><a href={url("install/#port")}>Port Fovea to your app</a></li>
+      <li><a href={`${project.repository}/blob/HEAD/CHANGELOG.md`}>Changelog</a></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 5rem;
+    padding-block: 2rem;
+    background: var(--fovea-surface-chrome);
+    border-top: 1px solid var(--fovea-border);
+    font-size: 0.95rem;
+  }
+
+  .cols {
+    display: grid;
+    gap: 1rem 3rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+  }
+</style>

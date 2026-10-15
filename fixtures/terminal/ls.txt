@@ -1,0 +1,3 @@
+$ ls -F
+CHANGELOG.md   \e[01;34mdocs\e[0m/      \e[01;31mfovea-0.1.0.tgz\e[0m  \e[01;36mlatest.vsix\e[0m@   package.json   \e[01;34mports\e[0m/    \e[01;32msetup.sh\e[0m*
+CONTRIBUTING.md  \e[01;34mfixtures\e[0m/  LICENSE          \e[01;34mpackages\e[0m/  pnpm-lock.yaml  README.md  \e[01;34msite\e[0m/

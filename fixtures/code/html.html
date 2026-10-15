@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" data-theme="day">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fovea palette</title>
+    <link rel="stylesheet" href="fovea.css">
+    <style>
+      body { background: var(--fovea-bg); color: var(--fovea-fg); }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <main id="main">
+      <h1>Fovea Day</h1>
+      <p>Ink on warm paper. <em>The most legible variant</em> for long reading.</p>
+      <!-- Swatches are generated at build time. -->
+      <ul class="swatches" aria-label="Neutrals">
+        <li><span class="swatch" style="--swatch: #f9f5ec"></span> bg</li>
+        <li><span class="swatch" style="--swatch: #2f2a25"></span> fg</li>
+      </ul>
+      <button type="button" data-theme-button="dusk" aria-pressed="false">Switch to Dusk</button>
+    </main>
+    <script type="module" src="theme.js"></script>
+  </body>
+</html>

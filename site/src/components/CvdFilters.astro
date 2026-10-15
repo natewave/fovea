@@ -1,0 +1,50 @@
+---
+import { feColorMatrixValues, MACHADO_2009 } from "@fovea/colorlab";
+
+/**
+ * Machado et al.'s severity-1 matrices as SVG filters, which work in linear RGB as the matrices
+ * expect. Machado's tritan matrix only approximates tritanopia, so the page labels it approximate.
+ */
+const FILTERS = [
+  { id: "fovea-cvd-protan", values: feColorMatrixValues(MACHADO_2009.protan) },
+  { id: "fovea-cvd-deutan", values: feColorMatrixValues(MACHADO_2009.deutan) },
+  { id: "fovea-cvd-tritan", values: feColorMatrixValues(MACHADO_2009.tritan) },
+];
+---
+
+<svg class="cvd-defs" aria-hidden="true" focusable="false" width="0" height="0">
+  <defs>
+    {
+      FILTERS.map((f) => (
+        <filter id={f.id} color-interpolation-filters="linearRGB">
+          <feColorMatrix type="matrix" values={f.values} />
+        </filter>
+      ))
+    }
+  </defs>
+</svg>
+
+<style>
+  .cvd-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  :global([data-cvd="protan"] .cvd-target) {
+    filter: url("#fovea-cvd-protan");
+  }
+
+  :global([data-cvd="deutan"] .cvd-target) {
+    filter: url("#fovea-cvd-deutan");
+  }
+
+  :global([data-cvd="tritan"] .cvd-target) {
+    filter: url("#fovea-cvd-tritan");
+  }
+
+  :global([data-cvd="gray"] .cvd-target) {
+    filter: grayscale(1);
+  }
+</style>

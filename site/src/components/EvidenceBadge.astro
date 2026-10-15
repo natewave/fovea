@@ -1,0 +1,78 @@
+---
+import type { EvidenceLabel } from "../lib/research.ts";
+
+interface Props {
+  readonly label: EvidenceLabel | undefined;
+  readonly qualifier?: string | undefined;
+}
+
+const { label, qualifier } = Astro.props;
+
+/** Each label has its own glyph, so the badges never depend on hue. */
+const GLYPHS: Readonly<Record<EvidenceLabel, string>> = {
+  "Systematic review": "◆",
+  Experiment: "●",
+  Mechanism: "▲",
+  "Expert opinion": "■",
+};
+
+const CLASSES: Readonly<Record<EvidenceLabel, string>> = {
+  "Systematic review": "review",
+  Experiment: "experiment",
+  Mechanism: "mechanism",
+  "Expert opinion": "opinion",
+};
+---
+
+{
+  label === undefined ? (
+    <span class="badge none">Not graded</span>
+  ) : (
+    <span class:list={["badge", CLASSES[label]]}>
+      <span aria-hidden="true">{GLYPHS[label]}</span> {label}
+      {qualifier !== undefined && <span class="qualifier">({qualifier})</span>}
+    </span>
+  )
+}
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35em;
+    padding: 0.1rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--fovea-border-strong);
+    background: var(--fovea-surface-popup);
+    color: var(--fovea-text);
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .qualifier {
+    font-weight: 400;
+    color: var(--fovea-text-subtle);
+  }
+
+  .review > span:first-child {
+    color: var(--fovea-success);
+  }
+
+  .experiment > span:first-child {
+    color: var(--fovea-info);
+  }
+
+  .mechanism > span:first-child {
+    color: var(--fovea-warning);
+  }
+
+  .opinion > span:first-child {
+    color: var(--fovea-text-subtle);
+  }
+
+  .none {
+    font-weight: 400;
+    color: var(--fovea-text-subtle);
+  }
+</style>

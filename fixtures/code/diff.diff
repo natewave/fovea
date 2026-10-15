@@ -1,0 +1,22 @@
+diff --git a/src/contrast.ts b/src/contrast.ts
+index 3f2a9c1..8b41d07 100644
+--- a/src/contrast.ts
++++ b/src/contrast.ts
+@@ -12,14 +12,18 @@ export interface Band {
+   readonly min: number;
+   readonly max?: number;
+ }
+ 
+-export const meets = (lc: number, band: Band): boolean =>
+-  lc >= band.min && (band.max === undefined || lc <= band.max);
++/** Both the APCA band and the WCAG 2.2 floor must pass. */
++export const meets = (lc: number, wcag: number, band: Band): boolean =>
++  Math.abs(lc) >= band.min &&
++  (band.max === undefined || Math.abs(lc) <= band.max) &&
++  wcag >= (band.wcag ?? 1);
+ 
+ export function describe(band: Band): string {
+-  return `Lc ${band.min}+`;
++  const upper = band.max === undefined ? "" : `–${band.max}`;
++  return `Lc ${band.min}${upper}`;
+ }

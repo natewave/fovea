@@ -1,0 +1,105 @@
+---
+import { variants } from "@fovea/palette";
+import EditorMock from "../components/EditorMock.astro";
+import TerminalMock from "../components/TerminalMock.astro";
+import ThemeSwitcher from "../components/ThemeSwitcher.astro";
+import Base from "../layouts/Base.astro";
+import { url } from "../lib/paths.ts";
+import { heroCode, transcript } from "../lib/samples.ts";
+
+const term = transcript("test-run");
+---
+
+<Base
+  title=""
+  description="Fovea comes in three variants, Day, Dusk and Night, built from one OKLCH palette drawn from vision research."
+>
+  <section class="hero wrap">
+    <div class="intro">
+      <h1>A color scheme for the eyes.</h1>
+      <p class="lede">
+        Fovea is a new color scheme designed for comfortable, legible reading. Informed by vision research, Fovea comes in
+        three variants.
+      </p>
+      <div class="buttons">
+        <a class="button primary" href={url("install/")}>Install Fovea</a>
+        <a class="button" href={url("palette/")}>Explore colors</a>
+        <a class="button" href={url("science/")}>Why these colors</a>
+      </div>
+      <div class="try">
+        <span>Try a variant:</span>
+        <ThemeSwitcher name="fovea-theme-hero" />
+      </div>
+    </div>
+    <div class="mocks">
+      <EditorMock code={heroCode()} lang="typescript" file="palette.ts" language="TypeScript" />
+      <TerminalMock transcript={term.text} title={term.command} />
+    </div>
+  </section>
+
+  <section class="wrap variants" aria-labelledby="variants-title">
+    <h2 id="variants-title">Three variants</h2>
+    <div class="grid">
+      {
+        variants.map((v) => (
+          <div class="card variant" data-theme={v.id}>
+            <h3>{v.name}</h3>
+            <p>{v.description}</p>
+          </div>
+        ))
+      }
+    </div>
+    <p class="muted">
+      Check the <a href={url("install/#settings")}>Recommended settings</a> for your app.
+    </p>
+  </section>
+
+  <section class="wrap" aria-labelledby="honest-title">
+    <h2 id="honest-title">What it's not</h2>
+    <p>
+      Fovea is designed for comfortable, legible reading. It doesn't prevent eye damage, cure eye strain or improve
+      sleep, and no color theme has been shown to. Breaks, screen brightness, room lighting and up-to-date glasses
+      matter more; you can check the <a href={url("comfort/")}>screen comfort guide</a> for more.
+    </p>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    display: grid;
+    gap: 2.5rem;
+    align-items: start;
+    padding-block: 3rem 1rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @media (min-width: 64rem) {
+    .hero {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      padding-top: 4rem;
+    }
+  }
+
+  .mocks {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .try {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--fovea-text-subtle);
+  }
+
+  .variant {
+    background: var(--fovea-surface-editor);
+    color: var(--fovea-text);
+  }
+
+  .variant h3 {
+    margin-top: 0;
+    color: var(--fovea-text-strong);
+  }
+</style>

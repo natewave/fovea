@@ -1,0 +1,2 @@
+\e[1;36m~/fovea\e[0m on \e[1;35mmain\e[0m \e[33m[!?]\e[0m \e[2mvia\e[22m \e[32mnode v24\e[0m
+\e[1;32m❯\e[0m pnpm report\e[90m:screenshots\e[0m

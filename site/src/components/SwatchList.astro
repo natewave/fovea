@@ -1,0 +1,97 @@
+---
+import { formatContrast, type Swatch } from "../lib/palette.ts";
+
+interface Props {
+  readonly swatches: readonly Swatch[];
+  readonly label: string;
+}
+
+const { swatches, label } = Astro.props;
+---
+
+<ul class="swatches" aria-label={label}>
+  {
+    swatches.map((s) => (
+      <li class="swatch">
+        <span class="chip" style={`background: var(${s.cssVar})`} />
+        <span class="name">{s.label}</span>
+        <code class="value" data-copy={s.hex}>
+          {s.hex}
+        </code>
+        <code class="value small" data-copy={s.oklch}>
+          {s.oklch}
+        </code>
+        <code class="value small" data-copy={s.rgb}>
+          {s.rgb}
+        </code>
+        {s.onEditor !== undefined && <span class="contrast">{formatContrast(s.onEditor)}</span>}
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .swatches {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+    margin: 0.75rem 0 1.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .swatch {
+    display: grid;
+    gap: 0.15rem;
+    align-content: start;
+    padding: 0.5rem;
+    border: 1px solid var(--fovea-border);
+    border-radius: 8px;
+    background: var(--fovea-surface-popup);
+    font-size: 0.85rem;
+  }
+
+  .chip {
+    display: block;
+    height: 3rem;
+    margin-bottom: 0.3rem;
+    border-radius: 5px;
+    border: 1px solid var(--fovea-border);
+  }
+
+  .name {
+    font-weight: 700;
+    color: var(--fovea-text-strong);
+  }
+
+  .value {
+    justify-self: start;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--fovea-text);
+    font-family: var(--font-code);
+    font-size: 0.85rem;
+    text-align: left;
+  }
+
+  .small {
+    color: var(--fovea-text-subtle);
+    font-size: 0.78rem;
+  }
+
+  :global(button.value) {
+    cursor: copy;
+    border-radius: 3px;
+  }
+
+  :global(button.value:hover) {
+    background: var(--fovea-surface-hover);
+  }
+
+  .contrast {
+    margin-top: 0.2rem;
+    color: var(--fovea-text-subtle);
+    font-size: 0.78rem;
+  }
+</style>

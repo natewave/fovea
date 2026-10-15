@@ -1,0 +1,16 @@
+{
+  "name": "@fovea/palette",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fovea's single source of truth: variants designed in OKLCH, semantic roles and the contrast budget.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./audit": "./src/audit.ts",
+    "./budget": "./src/budget.ts"
+  },
+  "dependencies": {
+    "@fovea/colorlab": "workspace:*"
+  }
+}

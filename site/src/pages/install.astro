@@ -1,0 +1,236 @@
+---
+import { GHOSTTY_MIN_VERSION } from "@fovea/build/ghostty";
+import {
+  bracketColorSettings,
+  editorClis,
+  ghosttyConfigNote,
+  ghosttyNightLine,
+  ghosttySteps,
+  ghosttyThemeLine,
+  italicSettings,
+  marketplaceCommand,
+  nightSetting,
+  recommendedSettings,
+  settingsJson,
+  themeNames,
+  vscodeSourceSteps,
+} from "@fovea/build/install";
+import { extensionId, isPlaceholder, project, releasesUrl } from "@fovea/build/project";
+import cssUrl from "../../../ports/palette/fovea.css?url";
+import jsonUrl from "../../../ports/palette/fovea.json?url";
+import CodeBlock from "../components/CodeBlock.astro";
+import Base from "../layouts/Base.astro";
+import { inlineMarkdown } from "../lib/markdown.ts";
+import { url } from "../lib/paths.ts";
+
+const unpublished = isPlaceholder(project.publisher);
+const marketplaceUrl = `https://marketplace.visualstudio.com/items?itemName=${extensionId}`;
+const openVsxUrl = `https://open-vsx.org/extension/${project.publisher}/${project.extensionName}`;
+const blob = (path: string): string => `${project.repository}/blob/HEAD/${path}`;
+const vsixName = project.vsixPath.split("/").at(-1) ?? "fovea.vsix";
+---
+
+<Base
+  title="Install"
+  description="How to install Fovea in VS Code, Cursor, VSCodium and Ghostty, including from source with git clone. Recommended settings and how to port Fovea to other apps."
+>
+  <div class="prose">
+    <h1>Install Fovea</h1>
+    <p class="lede">
+      Fovea currently ships all three variants: {themeNames.day}, {themeNames.dusk} and {themeNames.night} for VS Code (and editors built on it, such as Cursor and VSCodium) and for the Ghostty terminal. More ports are coming soon.
+    </p>
+
+    <nav aria-label="On this page" class="toc">
+      <ul>
+        <li><a href="#vscode">VS Code, Cursor and VSCodium</a></li>
+        <li><a href="#source">Manual install from source</a></li>
+        <li><a href="#settings">Recommended settings</a></li>
+        <li><a href="#ghostty">Ghostty</a></li>
+        <li><a href="#port">Port Fovea to your app</a></li>
+      </ul>
+    </nav>
+
+    <section id="vscode" aria-labelledby="vscode-title">
+      <h2 id="vscode-title">VS Code, Cursor and VSCodium</h2>
+      {
+        unpublished ? (
+          <div class="note warning">
+            <p>
+              Fovea isn't on the Visual Studio Marketplace or Open VSX yet. Until it is,
+              <a href="#source">install it from source</a>.
+            </p>
+          </div>
+        ) : (
+          <>
+            <h3 id="marketplace">From the Visual Studio Marketplace</h3>
+            <p>
+              In VS Code, open the Extensions view, search for <strong>Fovea</strong> and choose Install, or open the
+              <a href={marketplaceUrl}>Marketplace page</a>. From a terminal:
+            </p>
+            <CodeBlock code={marketplaceCommand} lang="shellscript" title="Terminal" copy />
+
+            <h3 id="open-vsx">From Open VSX (Cursor, VSCodium)</h3>
+            <p>
+              In Cursor or VSCodium, search for <strong>Fovea</strong> in the Extensions view, or see the
+              <a href={openVsxUrl}>Open VSX page</a>. From a terminal:
+            </p>
+            <CodeBlock
+              code={`cursor --install-extension ${extensionId}\ncodium --install-extension ${extensionId}`}
+              lang="shellscript"
+              title="Terminal"
+              copy
+            />
+
+            <h3 id="vsix">From a VSIX file</h3>
+            <p>
+              Download <code>{vsixName}</code> from the <a href={releasesUrl}>releases page</a>, then install it with
+              your editor's command-line tool, or run <strong>Extensions: Install from VSIX…</strong> from the Command
+              Palette.
+            </p>
+            <div class="table-scroll narrow">
+              <table>
+                <caption>Command-line tools</caption>
+                <thead>
+                  <tr><th scope="col">Editor</th><th scope="col">Command</th></tr>
+                </thead>
+                <tbody>
+                  {
+                    editorClis.map((e) => (
+                      <tr>
+                        <th scope="row">{e.app}</th>
+                        <td>
+                          <code>
+                            {e.cli} --install-extension {vsixName}
+                          </code>
+                        </td>
+                      </tr>
+                    ))
+                  }
+                </tbody>
+              </table>
+            </div>
+          </>
+        )
+      }
+    </section>
+
+    <section id="source" aria-labelledby="source-title">
+      <h2 id="source-title">Manual install from source</h2>
+      <p>
+        Build the extension yourself from a clone of the repository. You need Git, Node.js 22.18 or newer, and pnpm 10
+        (for example <code>npm install -g pnpm</code>).
+      </p>
+      <CodeBlock code={vscodeSourceSteps.join("\n")} lang="shellscript" title="Terminal" copy />
+      <ol>
+        <li><strong>git clone</strong> and <strong>cd</strong> fetch the repository and enter it.</li>
+        <li><strong>pnpm install</strong> installs the build tools.</li>
+        <li>
+          <strong>pnpm package:vscode</strong> regenerates every theme from the palette and packages the extension as
+          <code>{project.vsixPath}</code>. It downloads the packaging tool, vsce, the first time.
+        </li>
+        <li>
+          <strong>code --install-extension</strong> installs that file. For Cursor or VSCodium, use
+          <code>cursor</code> or <code>codium</code> instead of <code>code</code>.
+        </li>
+      </ol>
+      <p>
+        Then open the Command Palette, run <strong>Preferences: Color Theme</strong> and pick {themeNames.day},
+        {themeNames.dusk} or {themeNames.night}.
+      </p>
+    </section>
+
+    <section id="settings" aria-labelledby="settings-title">
+      <h2 id="settings-title">Recommended settings</h2>
+      <p>Add these to your <code>settings.json</code> (Command Palette: <strong>Preferences: Open User Settings (JSON)</strong>).</p>
+
+      <h3>Follow the system's light and dark mode</h3>
+      <CodeBlock code={settingsJson(recommendedSettings)} lang="json" title="settings.json" copy />
+      <p>
+        <strong>Why:</strong> light mode gets {themeNames.day}, the most legible variant, and dark mode gets
+        {themeNames.dusk}. Your editor then changes with your system and the time of day without you thinking about it.
+      </p>
+
+      <h3>Use Night in dark rooms</h3>
+      <CodeBlock code={settingsJson(nightSetting)} lang="json" title="settings.json" copy />
+      <p>
+        <strong>Why:</strong> {themeNames.night} sends less light to your eyes than {themeNames.dusk} while keeping body
+        text above the contrast floors. Keep some room light on as well; the
+        <a href={url("comfort/#brightness")}>comfort guide</a> explains why.
+      </p>
+
+      <h3>Optional: italic comments</h3>
+      <CodeBlock code={settingsJson(italicSettings)} lang="json" title="settings.json" copy />
+      <p>
+        <strong>Why it's off by default:</strong> dyslexia guidance advises against italics, so Fovea uses none. If you
+        like italic comments, this adds the style and keeps Fovea's colors.
+      </p>
+
+      <h3>Optional: colored bracket pairs</h3>
+      <CodeBlock code={settingsJson(bracketColorSettings)} lang="json" title="settings.json" copy />
+      <p>
+        <strong>Why it's off by default:</strong> Fovea keeps brackets neutral so its few hues stay meaningful. This
+        brings back VS Code's own bracket colors.
+      </p>
+    </section>
+
+    <section id="ghostty" aria-labelledby="ghostty-title">
+      <h2 id="ghostty-title">Ghostty</h2>
+      <p>The themes need Ghostty {GHOSTTY_MIN_VERSION} or newer. Copy them into Ghostty's themes folder:</p>
+      <CodeBlock code={ghosttySteps.join("\n")} lang="shellscript" title="Terminal" copy />
+      <p>Then add one line to your Ghostty config to follow the system's light and dark mode:</p>
+      <CodeBlock code={ghosttyThemeLine} lang="ini" title="Ghostty config" copy />
+      <p>Or use Night when the system is dark:</p>
+      <CodeBlock code={ghosttyNightLine} lang="ini" title="Ghostty config" copy />
+      <p set:html={inlineMarkdown(ghosttyConfigNote)} />
+      <p>
+        Run <code>ghostty +list-themes</code> to check that the themes are found. Leave Ghostty's
+        <code>minimum-contrast</code> at its default of 1, because Fovea's terminal colors already meet their contrast
+        floors; <code>ghostty +show-config --default --docs</code> describes what the setting changes.
+      </p>
+    </section>
+
+    <section id="port" aria-labelledby="port-title">
+      <h2 id="port-title">Port Fovea to your app</h2>
+      <p>
+        Every port is generated from one palette. To bring Fovea to another editor or terminal, start from the palette
+        files and the style guide:
+      </p>
+      <div class="buttons">
+        <a class="button" href={jsonUrl} download="fovea.json">Download fovea.json</a>
+        <a class="button" href={cssUrl} download="fovea.css">Download fovea.css</a>
+      </div>
+      <ul>
+        <li>
+          <strong>fovea.json</strong> has every color in all three variants: neutrals, accent tones, semantic roles,
+          syntax colors, overlays and the 16 ANSI colors.
+        </li>
+        <li>
+          <strong>fovea.css</strong> defines the same colors as CSS custom properties, switched by
+          <code>data-theme</code> or the system's color scheme. This site uses nothing else.
+        </li>
+        <li>
+          The <a href={blob("docs/style-guide.md")}>style guide</a> explains how to map an app's settings to Fovea's
+          roles, and the <a href={blob("docs/generated/roles.md")}>role table</a> lists every value.
+        </li>
+        <li>
+          <a href={blob("CONTRIBUTING.md#adding-a-port")}>CONTRIBUTING.md</a> describes how to add a port as a generator
+          with tests, so it never drifts from the palette.
+        </li>
+      </ul>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .toc ul {
+    padding-left: 1.2rem;
+  }
+
+  section {
+    margin-top: 1rem;
+  }
+
+  .narrow table {
+    min-width: 0;
+  }
+</style>

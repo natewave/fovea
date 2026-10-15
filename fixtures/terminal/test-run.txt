@@ -1,0 +1,14 @@
+$ pnpm test
+ \e[32m✓\e[39m packages/colorlab/test/contrast.test.ts \e[2m(24 tests) 18ms\e[22m
+ \e[32m✓\e[39m packages/palette/test/cvd.test.ts \e[2m(51 tests) 41ms\e[22m
+ \e[31m❯\e[39m packages/palette/test/contrast.test.ts \e[2m(12 tests | \e[22m\e[31m1 failed\e[39m\e[2m) 22ms\e[22m
+   \e[31m×\e[39m Fovea Night > comment/punctuation on bg meets the budget
+   \e[33m↓\e[39m Fovea Night > emitted light \e[2m[skipped]\e[22m
+
+\e[1;31m FAIL \e[22;39m packages/palette/test/contrast.test.ts > Fovea Night
+\e[31mAssertionError\e[39m: expected 58.4 to be greater than or equal to 60
+ \e[36m❯\e[39m packages/palette/test/contrast.test.ts:\e[33m28\e[39m:\e[33m7\e[39m
+
+\e[2m Test Files \e[22m \e[1;31m1 failed\e[22;39m\e[2m | \e[22m\e[1;32m11 passed\e[22;39m\e[90m (12)\e[39m
+\e[2m      Tests \e[22m \e[1;31m1 failed\e[22;39m\e[2m | \e[22m\e[1;32m231 passed\e[22;39m\e[2m | \e[22m\e[33m1 skipped\e[39m\e[90m (233)\e[39m
+\e[2m   Duration \e[22m 3.19s

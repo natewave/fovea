@@ -1,0 +1,32 @@
+{
+  "name": "@fovea/site",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The Fovea website.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "@fontsource/atkinson-hyperlegible-mono": "5.3.0",
+    "@fontsource/atkinson-hyperlegible-next": "5.3.0",
+    "@fovea/build": "workspace:*",
+    "@fovea/colorlab": "workspace:*",
+    "@fovea/palette": "workspace:*",
+    "astro": "7.3.8",
+    "shiki": "4.5.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "^1.64.1",
+    "typescript": "6.0.3",
+    "vitest": "^5.0.4"
+  }
+}

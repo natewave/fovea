@@ -1,0 +1,147 @@
+---
+import EvidenceBadge from "../components/EvidenceBadge.astro";
+import Sources from "../components/Sources.astro";
+import { limits, myths, principles } from "../data/science.ts";
+import Base from "../layouts/Base.astro";
+import { url } from "../lib/paths.ts";
+import { dossierUrl } from "../lib/research.ts";
+---
+
+<Base
+  title="Why these colors"
+  description="The vision research behind Fovea in plain language: each principle with its evidence, how Fovea applies it, its caveats, and the myths it avoids."
+>
+  <div class="prose">
+    <h1>Why these colors</h1>
+    <p class="lede">
+      Below is a list of principles and how Fovea applies the research.
+    </p>
+
+    <nav aria-label="Principles on this page" class="toc">
+      <h2 class="visually-hidden">Contents</h2>
+      <ol>
+        {
+          principles.map((p) => (
+            <li>
+              <a href={`#${p.id}`}>{p.title}</a>
+            </li>
+          ))
+        }
+        <li><a href="#limits">What a color theme can't do</a></li>
+        <li><a href="#myths">Myths</a></li>
+      </ol>
+    </nav>
+
+    {
+      principles.map((p) => (
+        <section id={p.id} aria-labelledby={`${p.id}-title`} class="principle">
+          <h2 id={`${p.id}-title`}>{p.title}</h2>
+          <p class="badges">
+            {p.evidence.map((e) => (
+              <EvidenceBadge label={e} />
+            ))}
+          </p>
+          <h3>What the research found</h3>
+          <p>{p.finding}</p>
+          <h3>How Fovea applies it</h3>
+          <p>{p.inFovea}</p>
+          <h3>Caveats</h3>
+          <p>{p.caveat}</p>
+          <Sources keys={p.sources} />
+        </section>
+      ))
+    }
+
+    <section id="limits" aria-labelledby="limits-title">
+      <h2 id="limits-title">What a color theme can't do</h2>
+      <div class="grid">
+        {
+          limits.map((l) => (
+            <div class="card">
+              <h3>{l.title}</h3>
+              <p>{l.text}</p>
+              <Sources keys={l.sources} />
+            </div>
+          ))
+        }
+      </div>
+      <p>
+        The <a href={url("comfort/")}>screen comfort guide</a> covers what helps beyond the theme.
+      </p>
+    </section>
+
+    <section id="myths" aria-labelledby="myths-title">
+      <h2 id="myths-title">Myths</h2>
+      {
+        myths.map((m) => (
+          <article class="myth">
+            <h3>
+              <span class="tag">Myth</span> {m.myth}
+            </h3>
+            <p>
+              <strong>{m.answer}</strong> {m.detail}
+            </p>
+            <Sources keys={m.sources} />
+          </article>
+        ))
+      }
+    </section>
+  </div>
+</Base>
+
+<style>
+  .toc ol {
+    padding-left: 1.4rem;
+  }
+
+  .principle {
+    border-top: 1px solid var(--fovea-border);
+    margin-top: 2.5rem;
+  }
+
+  .principle h2 {
+    margin-top: 1.5rem;
+  }
+
+  .principle h3 {
+    font-size: 1rem;
+    margin: 1.2rem 0 0.2rem;
+    color: var(--fovea-text-subtle);
+  }
+
+  .principle h3 + p {
+    margin-top: 0;
+  }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .card h3 {
+    margin-top: 0;
+  }
+
+  .myth {
+    margin: 1.5rem 0;
+    padding: 1rem 1.25rem;
+    border-left: 4px solid var(--fovea-warning-mark);
+    background: var(--fovea-surface-popup);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+
+  .myth h3 {
+    margin-top: 0;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0 0.5rem;
+    border-radius: 4px;
+    border: 1px solid var(--fovea-border-strong);
+    color: var(--fovea-text-subtle);
+    font-size: 0.8rem;
+    vertical-align: middle;
+  }
+</style>

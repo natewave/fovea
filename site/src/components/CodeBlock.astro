@@ -1,0 +1,77 @@
+---
+import type { BundledLanguage } from "shiki";
+import { highlight } from "../lib/highlight.ts";
+
+interface Props {
+  readonly code: string;
+  readonly lang: BundledLanguage;
+  readonly title?: string;
+  /** Show a copy button (commands and settings). */
+  readonly copy?: boolean;
+}
+
+const { code, lang, title, copy = false } = Astro.props;
+const html = await highlight(code, lang);
+---
+
+<figure class="code-block">
+  {
+    (title !== undefined || copy) && (
+      <figcaption>
+        <span>{title ?? ""}</span>
+        {copy && (
+          <button type="button" class="copy" data-copy={code.trimEnd()} data-copy-label={title ?? "code"} hidden>
+            Copy
+          </button>
+        )}
+      </figcaption>
+    )
+  }
+  <Fragment set:html={html} />
+</figure>
+
+<style>
+  .code-block {
+    margin: 1rem 0 1.5rem;
+    border: 1px solid var(--fovea-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--fovea-surface-editor);
+  }
+
+  figcaption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 2.5rem;
+    padding: 0.25rem 0.5rem 0.25rem 1rem;
+    background: var(--fovea-surface-chrome);
+    border-bottom: 1px solid var(--fovea-border);
+    color: var(--fovea-text-subtle);
+    font-size: 0.9rem;
+  }
+
+  .copy {
+    min-height: 2rem;
+    padding: 0.2rem 0.75rem;
+    border: 1px solid var(--fovea-border-strong);
+    border-radius: 6px;
+    background: var(--fovea-surface-popup);
+    color: var(--fovea-text);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .copy:hover {
+    background: var(--fovea-surface-hover);
+  }
+
+  .copy[hidden] {
+    display: none;
+  }
+
+  .code-block :global(pre) {
+    font-size: 0.9rem;
+  }
+</style>

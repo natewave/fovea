@@ -1,0 +1,9 @@
+packages:
+  - packages/*
+  - ports/vscode
+  - site
+
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - '@biomejs/biome'

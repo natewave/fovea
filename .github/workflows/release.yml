@@ -1,0 +1,82 @@
+name: Release
+
+# Runs when a version tag such as v0.1.0 is pushed. It builds and tests the extension, stops while
+# the publisher in project.ts is still a placeholder, and attaches the VSIX to a draft GitHub
+# release; it publishes to the Visual Studio Marketplace and Open VSX only when both the VSCE_PAT
+# and OVSX_PAT secrets exist.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      OVSX_PAT: ${{ secrets.OVSX_PAT }}
+      VSIX: dist/vscode/fovea.vsix
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm lint
+
+      - run: pnpm typecheck
+
+      - run: pnpm test
+
+      - name: Generated files are up to date
+        run: pnpm check:stale
+
+      - name: Refuse placeholder values
+        run: |
+          if grep -q PLACEHOLDER ports/vscode/package.json; then
+            echo "::error::Replace the PLACEHOLDER publisher in packages/build/src/project.ts, run pnpm build and commit."
+            exit 1
+          fi
+
+      - name: The tag matches the extension version
+        run: |
+          version="v$(node -p "require('./ports/vscode/package.json').version")"
+          if [ "$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match the extension version $version."
+            exit 1
+          fi
+
+      - name: Package the VS Code extension
+        run: pnpm package:vscode
+
+      - name: Attach the VSIX to a draft GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1 ||
+            gh release create "$GITHUB_REF_NAME" "$VSIX" --draft --verify-tag --generate-notes --title "Fovea $GITHUB_REF_NAME"
+
+      - name: Skip publishing without both tokens
+        if: env.VSCE_PAT == '' || env.OVSX_PAT == ''
+        run: echo "::notice::VSCE_PAT and OVSX_PAT are not both set, so nothing was published to the marketplaces."
+
+      - name: Publish to Open VSX
+        if: env.VSCE_PAT != '' && env.OVSX_PAT != ''
+        run: pnpm dlx ovsx@1.2.0 publish "$VSIX" --skip-duplicate
+
+      # Global Azure DevOps tokens stop working on 2026-12-01: docs/decisions/015-marketplace-token-retirement.md
+      - name: Publish to the Visual Studio Marketplace
+        if: env.VSCE_PAT != '' && env.OVSX_PAT != ''
+        run: pnpm dlx @vscode/vsce@4.0.0 publish --packagePath "$VSIX" --skip-duplicate

@@ -1,0 +1,21 @@
+{
+  "name": "@fovea/build",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Generators and CLI that build every Fovea port from the palette.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "bin": {
+    "fovea": "./src/cli.ts"
+  },
+  "dependencies": {
+    "@fovea/colorlab": "workspace:*",
+    "@fovea/palette": "workspace:*",
+    "shiki": "4.5.0",
+    "yaml": "2.9.1"
+  }
+}

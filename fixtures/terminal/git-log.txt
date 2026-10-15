@@ -1,0 +1,7 @@
+$ git log --oneline --decorate -6
+\e[33m8b41d07 (\e[1;36mHEAD -> \e[1;32mmain\e[33m)\e[m Strike through deprecated code without the error red
+\e[33m51c09ab\e[m Write the design document
+\e[33m2d4f7e1 (\e[1;31morigin/main\e[33m)\e[m Weigh syntax hues by characters
+\e[33m9a0b3c4\e[m Add language fixtures and the token frequency report
+\e[33m77e2f90 (\e[1;33mtag: v0.0.1\e[33m)\e[m Solve the palette from OKLCH specs
+\e[33m0c1d2e3\e[m Add colorlab with APCA, WCAG and CVD reference tests

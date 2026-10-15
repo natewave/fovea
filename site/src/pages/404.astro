@@ -1,0 +1,21 @@
+---
+import Base from "../layouts/Base.astro";
+import { url } from "../lib/paths.ts";
+---
+
+<Base title="Page not found" description="This page doesn't exist. Head back to the Fovea home page.">
+  <div class="prose missing">
+    <h1>Page not found</h1>
+    <p class="lede">There's nothing at this address. It may have moved, or the link may be mistyped.</p>
+    <div class="buttons">
+      <a class="button primary" href={url()}>Go to the home page</a>
+      <a class="button" href={url("install/")}>Install Fovea</a>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .missing {
+    padding-block: 4rem;
+  }
+</style>

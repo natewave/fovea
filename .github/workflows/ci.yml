@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Lint, typecheck, test, generated files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm lint
+
+      - run: pnpm typecheck
+
+      - run: pnpm test
+
+      - name: Generated files are up to date
+        run: pnpm check:stale
+
+      - name: Package the VS Code extension
+        run: pnpm package:vscode
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: fovea-vsix
+          path: dist/vscode/fovea.vsix
+          if-no-files-found: error
+
+  site:
+    name: Website build, checks and accessibility
+    runs-on: ubuntu-latest
+    env:
+      # A non-root base, as on https://<user>.github.io/<repo>/, so links that ignore it fail.
+      BASE_PATH: /fovea/
+      SITE_URL: https://example.github.io
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm site:check
+
+      - run: pnpm site:build
+
+      - name: Palette-only colors, links, landmarks
+        run: pnpm site:test
+
+      - run: pnpm --filter @fovea/site exec playwright install --with-deps chromium
+
+      - name: Accessibility (axe) and behavior in every variant
+        run: pnpm site:e2e
+
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-report
+          path: site/test-results/
+          if-no-files-found: ignore

@@ -1,0 +1,81 @@
+---
+import Sources from "../components/Sources.astro";
+import { tips } from "../data/comfort.ts";
+import Base from "../layouts/Base.astro";
+import { url } from "../lib/paths.ts";
+---
+
+<Base
+  title="Screen comfort guide"
+  description="What helps with screen comfort beyond any color theme: 20-20-20 breaks, blinking, matching screen brightness to the room, viewing distance and up-to-date glasses."
+>
+  <div class="prose">
+    <h1>Screen comfort guide</h1>
+    <p class="lede">
+      A color theme is a small part of screen comfort. These habits come from eye-care bodies and ergonomics
+      standards, with a note on how strong the evidence is for each.
+    </p>
+
+    <div class="note warning" role="note">
+      <p>
+        <strong>Not medical advice.</strong> This page is general information. If your eyes hurt, your vision changes
+        or discomfort persists, see an eye-care professional.
+      </p>
+    </div>
+
+    <nav aria-label="On this page" class="toc">
+      <ul>
+        {
+          tips.map((t) => (
+            <li>
+              <a href={`#${t.id}`}>{t.title}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    {
+      tips.map((t) => (
+        <section id={t.id} aria-labelledby={`${t.id}-title`} class="tip">
+          <h2 id={`${t.id}-title`}>{t.title}</h2>
+          {t.advice.map((a) => (
+            <p>{a}</p>
+          ))}
+          <p class="evidence">
+            <strong>Evidence:</strong> {t.evidence}
+          </p>
+          <Sources keys={t.sources} />
+        </section>
+      ))
+    }
+
+    <section aria-labelledby="theme-title">
+      <h2 id="theme-title">Where the theme fits</h2>
+      <p>
+        Fovea can keep text legible and avoid glaring contrast, and Night sends less light to your eyes than Dusk. It
+        can't replace any of the habits above. The <a href={url("science/#limits")}>science page</a> explains what a
+        color theme can and can't do.
+      </p>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .toc ul {
+    padding-left: 1.2rem;
+  }
+
+  .tip {
+    border-top: 1px solid var(--fovea-border);
+    margin-top: 2rem;
+  }
+
+  .tip h2 {
+    margin-top: 1.5rem;
+  }
+
+  .evidence {
+    color: var(--fovea-text-subtle);
+  }
+</style>

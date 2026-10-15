@@ -1,0 +1,38 @@
+{
+  "name": "fovea-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fovea: an evidence-based color scheme for VS Code, Ghostty and the web.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.31.0",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "build": "node packages/build/src/cli.ts build",
+    "check:generated": "node packages/build/src/cli.ts check",
+    "report": "node packages/build/src/cli.ts report",
+    "report:screenshots": "node scripts/report-screenshots.ts",
+    "check:stale": "pnpm build && git diff --exit-code && test -z \"$(git status --porcelain)\"",
+    "package:vscode": "pnpm build && node scripts/package-vscode.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "site:dev": "pnpm --filter @fovea/site dev",
+    "site:build": "pnpm --filter @fovea/site build",
+    "site:test": "pnpm --filter @fovea/site test",
+    "site:check": "pnpm --filter @fovea/site check",
+    "site:e2e": "pnpm --filter @fovea/site e2e",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^24.19.2",
+    "typescript": "6.0.3",
+    "vitest": "^5.0.4"
+  }
+}

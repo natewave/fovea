@@ -1,0 +1,330 @@
+---
+import { project } from "@fovea/build/project";
+import EvidenceBadge from "../components/EvidenceBadge.astro";
+import Base from "../layouts/Base.astro";
+import { inlineMarkdown } from "../lib/markdown.ts";
+import { url } from "../lib/paths.ts";
+import {
+  benchmark,
+  bullets,
+  EVIDENCE_LABELS,
+  methodParagraph,
+  RESEARCH_PATH,
+  researchSource,
+  stats,
+  topics,
+  verdicts,
+} from "../lib/research.ts";
+
+const source = researchSource();
+const all = topics(source);
+const counts = stats(all);
+const dossierUrl = `${project.repository}/blob/HEAD/${RESEARCH_PATH}`;
+const notesUrl = `${project.repository}/tree/HEAD/docs/research/verification`;
+---
+
+<Base
+  title="Research"
+  description="The verified research dossier behind Fovea: every claim checked against its source, with study type, sample size, key result and evidence strength."
+>
+  <div class="wrap">
+    <h1>Research</h1>
+    <p class="lede">
+      Fovea starts from a research dossier, not from taste. Every claim below was checked against its original source,
+      opened during verification, and is graded by strength. Where the evidence is weak or contested, it says so.
+    </p>
+
+    <ul class="stats" aria-label="The dossier in numbers">
+      <li><strong>{counts.findings}</strong> findings</li>
+      <li><strong>{counts.sources}</strong> linked sources</li>
+      <li><strong>{all.length}</strong> topics</li>
+      <li><strong>{counts.newer}</strong> studies from 2024–2026</li>
+    </ul>
+
+    <div class="card method">
+      <h2>How it was compiled</h2>
+      <p set:html={inlineMarkdown(methodParagraph(source))} />
+      <p>Findings by evidence strength (the rest are searches or reference data, not graded):</p>
+      <ul class="counts">
+        {
+          EVIDENCE_LABELS.map((l) => (
+            <li>
+              <EvidenceBadge label={l} /> <strong>{counts.byLabel[l]}</strong>
+            </li>
+          ))
+        }
+      </ul>
+      <p>
+        The dossier lives in the repository as <a href={dossierUrl}>docs/research.md</a>, with the
+        <a href={notesUrl}>verification notes</a> behind it. This page is generated from that file.
+      </p>
+    </div>
+
+    <nav aria-label="Topics" class="toc">
+      <h2>Topics</h2>
+      <ol>
+        {
+          all.map((t) => (
+            <li>
+              <a href={`#${t.id}`}>{t.title}</a>
+            </li>
+          ))
+        }
+        <li><a href="#verdicts">Verdicts on the original brief</a></li>
+        <li><a href="#benchmark">Benchmark</a></li>
+        <li><a href="#contested">Contested or unknown</a></li>
+        <li><a href="#newer">Newer work</a></li>
+      </ol>
+    </nav>
+
+    {
+      all.map((t) => (
+        <section id={t.id} aria-labelledby={`${t.id}-title`} class="topic">
+          <h2 id={`${t.id}-title`}>
+            <span class="muted">{t.number}.</span> {t.title}
+          </h2>
+          {t.intro.map((p) => (
+            <p set:html={inlineMarkdown(p)} />
+          ))}
+          <div class="findings">
+            {t.findings.map((f) => (
+              <article class="finding">
+                <h3>
+                  <span set:html={inlineMarkdown(f.claim)} />
+                  {f.isNew && <span class="new">2024–2026</span>}
+                </h3>
+                <p class="badge-row">
+                  <EvidenceBadge label={f.evidence.label} qualifier={f.evidence.qualifier} />
+                </p>
+                <dl>
+                  <div>
+                    <dt>Source</dt>
+                    <dd set:html={inlineMarkdown(f.source)} />
+                  </div>
+                  <div>
+                    <dt>Study</dt>
+                    <dd>
+                      <span set:html={inlineMarkdown(f.studyType)} />
+                      {f.n !== "—" && f.n !== "" && <span class="muted"> · n = {f.n}</span>}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Key result</dt>
+                    <dd set:html={inlineMarkdown(f.result)} />
+                  </div>
+                  <div>
+                    <dt>In Fovea</dt>
+                    <dd set:html={inlineMarkdown(f.implication)} />
+                  </div>
+                </dl>
+              </article>
+            ))}
+          </div>
+        </section>
+      ))
+    }
+
+    <section id="verdicts" aria-labelledby="verdicts-title">
+      <h2 id="verdicts-title">Verdicts on the original brief</h2>
+      <p>
+        The project brief came with a research table. Verification confirmed some rows, corrected others and found one
+        benchmark figure wrong.
+      </p>
+      <div class="table-scroll">
+        <table>
+          <caption>Each row of the brief's research table, checked</caption>
+          <thead>
+            <tr>
+              <th scope="col">Row</th>
+              <th scope="col">Topic</th>
+              <th scope="col">Verdict</th>
+              <th scope="col">Main correction</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              verdicts(source).map((v) => (
+                <tr>
+                  <td>{v.row}</td>
+                  <th scope="row" set:html={inlineMarkdown(v.topic)} />
+                  <td set:html={inlineMarkdown(v.verdict)} />
+                  <td set:html={inlineMarkdown(v.correction)} />
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="benchmark" aria-labelledby="benchmark-title">
+      <h2 id="benchmark-title">Benchmark</h2>
+      <p>
+        Default text on its own background in popular themes, recomputed with the same code Fovea's tests use. Theme
+        colors were read from each theme's official source; the URLs are in the
+        <a href={`${project.repository}/blob/HEAD/docs/research/verification/c-standards-licensing.md`}>standards verification notes</a>.
+        Fovea's own values are on the <a href={url("palette/#benchmark")}>palette page</a>.
+      </p>
+      <div class="table-scroll">
+        <table>
+          <caption>Plain text on the editor background</caption>
+          <thead>
+            <tr>
+              <th scope="col">Theme</th>
+              <th scope="col">Text</th>
+              <th scope="col">Background</th>
+              <th scope="col">Lc</th>
+              <th scope="col">WCAG 2</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              benchmark(source).map((r) => (
+                <tr>
+                  <th scope="row">{r.theme}</th>
+                  <td><code>{r.text}</code></td>
+                  <td><code>{r.background}</code></td>
+                  <td>{r.lc}</td>
+                  <td>{r.wcag}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="contested" aria-labelledby="contested-title">
+      <h2 id="contested-title">Contested or unknown</h2>
+      <ul class="prose-list">
+        {bullets(source, "Contested or unknown").map((b) => <li set:html={inlineMarkdown(b)} />)}
+      </ul>
+    </section>
+
+    <section id="newer" aria-labelledby="newer-title">
+      <h2 id="newer-title">Newer work found (2024–2026)</h2>
+      <ul class="prose-list">
+        {bullets(source, "Newer work found (2024–2026)").map((b) => <li set:html={inlineMarkdown(b)} />)}
+      </ul>
+    </section>
+
+    <section class="card cta" aria-labelledby="cta-title">
+      <h2 id="cta-title">Try it on your own code</h2>
+      <p>
+        Fovea is free and open source. Install it in VS Code, Cursor or Ghostty, and switch variants as the day goes on.
+      </p>
+      <div class="buttons">
+        <a class="button primary" href={url("install/")}>Install Fovea</a>
+        <a class="button" href={url("science/")}>Read the principles</a>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stats li {
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--fovea-border);
+    border-radius: var(--radius);
+    background: var(--fovea-surface-popup);
+  }
+
+  .stats strong {
+    display: block;
+    font-size: 1.6rem;
+    color: var(--fovea-text-strong);
+  }
+
+  .method h2 {
+    margin-top: 0;
+  }
+
+  .counts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .toc ol {
+    columns: 2 18rem;
+    padding-left: 1.4rem;
+  }
+
+  .topic {
+    margin-top: 3rem;
+  }
+
+  .findings {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 26rem), 1fr));
+  }
+
+  .finding {
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--fovea-border);
+    border-radius: var(--radius);
+    background: var(--fovea-surface-popup);
+  }
+
+  .finding h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.05rem;
+  }
+
+  .new {
+    display: inline-block;
+    margin-left: 0.4rem;
+    padding: 0 0.45rem;
+    border: 1px solid var(--fovea-border-strong);
+    border-radius: 4px;
+    color: var(--fovea-text-subtle);
+    font-size: 0.75rem;
+    font-weight: 400;
+    vertical-align: middle;
+  }
+
+  .badge-row {
+    margin: 0 0 0.6rem;
+  }
+
+  dl {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 0.93rem;
+  }
+
+  dt {
+    font-weight: 700;
+    color: var(--fovea-text-subtle);
+  }
+
+  dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .prose-list li {
+    margin-bottom: 0.6rem;
+  }
+
+  .cta {
+    margin-top: 3rem;
+  }
+
+  .cta h2 {
+    margin-top: 0;
+  }
+</style>

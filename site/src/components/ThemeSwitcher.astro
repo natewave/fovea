@@ -1,0 +1,80 @@
+---
+/**
+ * Auto follows the system: light shows Day, dark shows Dusk. The control appears once the script
+ * runs; without it the site still follows the system.
+ */
+interface Props {
+  /** Radio group name; each switcher on a page needs its own. */
+  readonly name?: string;
+}
+
+const { name = "fovea-theme" } = Astro.props;
+
+const CHOICES: readonly { readonly value: string; readonly label: string }[] = [
+  { value: "auto", label: "Auto" },
+  { value: "day", label: "Day" },
+  { value: "dusk", label: "Dusk" },
+  { value: "night", label: "Night" },
+];
+---
+
+<fieldset class="switcher" data-theme-switcher hidden>
+  <legend class="visually-hidden">Variant</legend>
+  {
+    CHOICES.map((c) => (
+      <label>
+        <input type="radio" name={name} value={c.value} checked={c.value === "auto"} />
+        <span>{c.label}</span>
+      </label>
+    ))
+  }
+</fieldset>
+
+<style>
+  .switcher {
+    display: inline-flex;
+    margin: 0;
+    padding: 3px;
+    border: 1px solid var(--fovea-border-strong);
+    border-radius: 999px;
+    background: var(--fovea-surface-editor);
+  }
+
+  .switcher[hidden] {
+    display: none;
+  }
+
+  label {
+    position: relative;
+    cursor: pointer;
+  }
+
+  input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    padding: 0 0.8rem;
+    border-radius: 999px;
+    color: var(--fovea-text-subtle);
+    font-size: 0.95rem;
+  }
+
+  input:checked + span {
+    background: var(--fovea-action-bg);
+    color: var(--fovea-text-strong);
+    font-weight: 700;
+  }
+
+  input:focus-visible + span {
+    outline: 3px solid var(--fovea-focus);
+    outline-offset: 1px;
+  }
+</style>

@@ -1,0 +1,58 @@
+---
+import { terminalHtml } from "../lib/terminal.ts";
+
+interface Props {
+  readonly transcript: string;
+  /** Shown in the title bar, such as the command. */
+  readonly title: string;
+}
+
+const { transcript, title } = Astro.props;
+---
+
+<figure class="terminal">
+  <figcaption>
+    <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+    <span>{title}</span>
+  </figcaption>
+  <pre tabindex="0"><code set:html={terminalHtml(transcript)} /></pre>
+</figure>
+
+<style>
+  .terminal {
+    margin: 0;
+    border: 1px solid var(--fovea-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--fovea-surface-editor);
+  }
+
+  figcaption {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.45rem 0.9rem;
+    background: var(--fovea-surface-chrome);
+    border-bottom: 1px solid var(--fovea-border);
+    color: var(--fovea-text-subtle);
+    font-size: 0.85rem;
+  }
+
+  .dots {
+    display: inline-flex;
+    gap: 6px;
+  }
+
+  .dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--fovea-border-strong);
+  }
+
+  pre {
+    padding: 0.9rem 1rem;
+    color: var(--fovea-text);
+    font-size: 0.85rem;
+  }
+</style>

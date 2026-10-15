@@ -1,0 +1,32 @@
+# Fovea Day
+# Ink on warm paper. The most legible variant for long reading, and the natural match for bright rooms and daylight.
+# https://github.com/natewave/fovea
+# Generated from packages/palette by packages/build. Do not edit.
+
+palette = 0=#28241e
+palette = 1=#630005
+palette = 2=#00683a
+palette = 3=#6c5900
+palette = 4=#004f8c
+palette = 5=#7b348b
+palette = 6=#005c60
+palette = 7=#d5d0c8
+palette = 8=#6b6660
+palette = 9=#811200
+palette = 10=#00774d
+palette = 11=#7c6700
+palette = 12=#0065b0
+palette = 13=#9049a0
+palette = 14=#007378
+palette = 15=#ede9e2
+background = #f9f4ec
+foreground = #28241e
+cursor-color = #4c3d00
+cursor-text = #f9f4ec
+selection-background = #cbf6fb
+selection-foreground = #28241e
+search-background = #fee7c2
+search-foreground = #28241e
+search-selected-background = #fed6a2
+search-selected-foreground = #28241e
+split-divider-color = #cfc9c0

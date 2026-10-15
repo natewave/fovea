@@ -1,0 +1,32 @@
+# Fovea Dusk
+# Soft light on warm graphite, for dim rooms, evenings and anyone who prefers dark mode.
+# https://github.com/natewave/fovea
+# Generated from packages/palette by packages/build. Do not edit.
+
+palette = 0=#312d28
+palette = 1=#e4a590
+palette = 2=#a0e8ce
+palette = 3=#eed574
+palette = 4=#aad4ff
+palette = 5=#efbcfb
+palette = 6=#86e5ea
+palette = 7=#d4cfc9
+palette = 8=#aaa59f
+palette = 9=#ffa98c
+palette = 10=#86fbd4
+palette = 11=#ffe78a
+palette = 12=#c5e1ff
+palette = 13=#f7d2ff
+palette = 14=#95f4f8
+palette = 15=#efeae4
+background = #1e1b18
+foreground = #e6e1db
+cursor-color = #fde281
+cursor-text = #1e1b18
+selection-background = #162d43
+selection-foreground = #e6e1db
+search-background = #2b1d05
+search-foreground = #e6e1db
+search-selected-background = #1d1305
+search-selected-foreground = #e6e1db
+split-divider-color = #66625d

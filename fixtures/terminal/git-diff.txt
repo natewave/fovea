@@ -1,0 +1,16 @@
+$ git diff
+\e[1mdiff --git a/packages/palette/src/scopes.ts b/packages/palette/src/scopes.ts\e[m
+\e[1mindex 3f2a9c1..8b41d07 100644\e[m
+\e[1m--- a/packages/palette/src/scopes.ts\e[m
+\e[1m+++ b/packages/palette/src/scopes.ts\e[m
+\e[36m@@ -368,9 +368,16 @@\e[m export const scopeRules: readonly ScopeRule[] = [
+     fontStyle: ["underline"],
+   },
+\e[32m+  // Deprecated code is not an error.\e[m
+   {
+     name: "Deprecated code",
+     scope: ["invalid.deprecated"],
+\e[31m-    fontStyle: ["strikethrough"],\e[m
+\e[32m+    role: "syntax.plain",\e[m
+\e[32m+    fontStyle: ["strikethrough"],\e[m
+   },

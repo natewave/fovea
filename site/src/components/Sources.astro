@@ -1,0 +1,49 @@
+---
+import { type SourceKey, sources } from "../data/sources.ts";
+
+interface Props {
+  readonly keys: readonly SourceKey[];
+  readonly label?: string;
+}
+
+const { keys, label = "Sources" } = Astro.props;
+---
+
+<div class="sources">
+  <span class="label">{label}:</span>
+  <ul>
+    {
+      keys.map((k) => (
+        <li>
+          <a href={sources[k].url}>{sources[k].label}</a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .sources {
+    font-size: 0.92rem;
+    color: var(--fovea-text-subtle);
+  }
+
+  .label {
+    font-weight: 700;
+  }
+
+  ul {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: inline;
+  }
+
+  li:not(:last-child)::after {
+    content: "; ";
+  }
+</style>

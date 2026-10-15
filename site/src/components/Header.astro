@@ -1,0 +1,107 @@
+---
+import { logoSvg } from "@fovea/build/identity";
+import { url } from "../lib/paths.ts";
+import ThemeSwitcher from "./ThemeSwitcher.astro";
+
+const NAV: readonly { readonly path: string; readonly label: string }[] = [
+  { path: "palette/", label: "Palette" },
+  { path: "science/", label: "Science" },
+  { path: "install/", label: "Install" },
+  { path: "comfort/", label: "Comfort guide" },
+];
+
+const here = Astro.url.pathname;
+const logo = logoSvg(undefined).replace(
+  /role="img" aria-label="[^"]*"/,
+  'aria-hidden="true" focusable="false"',
+);
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href={url()}>
+      <span class="brand-logo" set:html={logo} />
+      <span>Fovea</span>
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        {
+          NAV.map((item) => (
+            <li>
+              <a href={url(item.path)} aria-current={here === url(item.path) ? "page" : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <ThemeSwitcher />
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background: var(--fovea-surface-chrome);
+    border-bottom: 1px solid var(--fovea-border);
+  }
+
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+    padding-block: 0.75rem;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--fovea-text-strong);
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-decoration: none;
+    margin-right: auto;
+  }
+
+  .brand-logo {
+    display: inline-flex;
+    width: 2rem;
+    height: 2rem;
+    color: var(--fovea-text-subtle);
+  }
+
+  .brand-logo :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  nav a {
+    display: inline-block;
+    padding: 0.35rem 0;
+    color: var(--fovea-text);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+  }
+
+  nav a:hover {
+    color: var(--fovea-text-strong);
+    border-bottom-color: var(--fovea-border-strong);
+  }
+
+  nav a[aria-current="page"] {
+    color: var(--fovea-text-strong);
+    font-weight: 700;
+    border-bottom-color: var(--fovea-accent);
+  }
+</style>

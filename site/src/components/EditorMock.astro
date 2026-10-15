@@ -1,0 +1,102 @@
+---
+import type { BundledLanguage } from "shiki";
+import { highlight } from "../lib/highlight.ts";
+
+interface Props {
+  readonly code: string;
+  readonly lang: BundledLanguage;
+  readonly file: string;
+  readonly language: string;
+}
+
+const { code, lang, file, language } = Astro.props;
+const html = await highlight(code, lang);
+---
+
+<figure class="editor">
+  <figcaption class="visually-hidden">An editor showing {file} in the current Fovea variant</figcaption>
+  <div class="titlebar" aria-hidden="true">
+    <span class="dots"><span></span><span></span><span></span></span>
+    <span class="tab">{file}</span>
+  </div>
+  <div class="body">
+    <Fragment set:html={html} />
+  </div>
+  <div class="status" aria-hidden="true">
+    <span>main</span>
+    <span>{language}</span>
+  </div>
+</figure>
+
+<style>
+  .editor {
+    margin: 0;
+    border: 1px solid var(--fovea-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--fovea-surface-editor);
+    font-size: 0.85rem;
+  }
+
+  .titlebar {
+    display: flex;
+    align-items: stretch;
+    gap: 1rem;
+    background: var(--fovea-surface-chrome);
+    border-bottom: 1px solid var(--fovea-border);
+  }
+
+  .dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding-left: 0.9rem;
+  }
+
+  .dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--fovea-border-strong);
+  }
+
+  .tab {
+    padding: 0.5rem 1rem;
+    background: var(--fovea-surface-editor);
+    color: var(--fovea-text);
+    border-top: 2px solid var(--fovea-accent);
+    font-family: var(--font-code);
+  }
+
+  .body :global(pre) {
+    padding: 0.75rem 0;
+    counter-reset: line;
+    font-size: 0.85rem;
+  }
+
+  .body :global(.line) {
+    display: inline-block;
+    min-width: 100%;
+    padding-right: 1rem;
+  }
+
+  .body :global(.line)::before {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    width: 3.2ch;
+    margin-right: 1.6ch;
+    text-align: right;
+    color: var(--fovea-text-muted);
+  }
+
+  .status {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.3rem 0.9rem;
+    background: var(--fovea-surface-chrome);
+    border-top: 1px solid var(--fovea-border);
+    color: var(--fovea-text-subtle);
+    font-size: 0.8rem;
+  }
+</style>

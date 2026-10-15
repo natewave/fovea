@@ -1,0 +1,45 @@
+@import url("fovea.css");
+
+:root {
+  --radius: 0.5rem;
+  --space: clamp(1rem, 2vw, 1.5rem);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font: 1.0625rem/1.6 "Atkinson Hyperlegible Next", system-ui, sans-serif;
+  background: var(--fovea-surface-editor);
+  color: var(--fovea-text);
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--fovea-focus);
+  outline-offset: 2px;
+}
+
+.swatch {
+  display: inline-block;
+  inline-size: 1.5em;
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  background: var(--swatch, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .swatch:hover {
+    transform: scale(1.1);
+    transition: transform 150ms ease-out;
+  }
+}
+
+#main > h1::after {
+  content: " \2014  palette";
+  color: oklch(0.62 0.01 70 / 80%);
+}

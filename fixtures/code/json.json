@@ -1,0 +1,18 @@
+{
+  "name": "fovea-example",
+  "version": "1.2.0",
+  "private": true,
+  "description": "Settings that pair well with Fovea",
+  "settings": {
+    "window.autoDetectColorScheme": true,
+    "workbench.preferredLightColorTheme": "Fovea Day",
+    "workbench.preferredDarkColorTheme": "Fovea Dusk",
+    "editor.fontSize": 14,
+    "editor.lineHeight": 1.6,
+    "editor.renderWhitespace": "boundary",
+    "editor.minimap.enabled": false
+  },
+  "contrast": { "body": 90, "comment": 60, "decorative": [15, 30] },
+  "variants": ["day", "dusk", "night"],
+  "experimental": null
+}

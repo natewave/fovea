@@ -1,0 +1,331 @@
+---
+import { apcaContrast, wcagContrast } from "@fovea/colorlab";
+import { neutralNames, role, variants } from "@fovea/palette";
+import CodeBlock from "../components/CodeBlock.astro";
+import CvdFilters from "../components/CvdFilters.astro";
+import Sources from "../components/Sources.astro";
+import SwatchList from "../components/SwatchList.astro";
+import TerminalMock from "../components/TerminalMock.astro";
+import Base from "../layouts/Base.astro";
+import {
+  accentSwatches,
+  ansiSwatches,
+  contrastMatrix,
+  formatContrast,
+  lightOutput,
+  MATRIX_SURFACES,
+  neutralSwatches,
+  semanticSwatches,
+  syntaxSwatches,
+} from "../lib/palette.ts";
+import { url } from "../lib/paths.ts";
+import { benchmark, dossierUrl, researchSource } from "../lib/research.ts";
+import { showcase, transcripts } from "../lib/samples.ts";
+
+const CVD_CHOICES: readonly { readonly value: string; readonly label: string }[] = [
+  { value: "none", label: "Typical" },
+  { value: "protan", label: "Protanopia" },
+  { value: "deutan", label: "Deuteranopia" },
+  { value: "tritan", label: "Tritanopia (approximate)" },
+  { value: "gray", label: "Grayscale" },
+];
+
+const benchmarkRows = benchmark(researchSource());
+const foveaRows = variants.map((v) => {
+  const text = role(v, "text");
+  const surface = role(v, "surface.editor");
+  return {
+    theme: v.name,
+    text,
+    background: surface,
+    lc: apcaContrast({ text, surface }).toFixed(1),
+    wcag: `${wcagContrast(text, surface).toFixed(2)}:1`,
+  };
+});
+const light = lightOutput(variants);
+const dusk = light.find((l) => l.v.id === "dusk")?.share ?? 1;
+const night = light.find((l) => l.v.id === "night")?.share ?? 1;
+const nightSaving = Math.round((1 - night / dusk) * 100);
+---
+
+<Base
+  title="Palette"
+  description="Every Fovea color in Day, Dusk and Night, with hex, OKLCH and RGB values, precomputed contrast, a color-vision simulation and code samples."
+>
+  <CvdFilters />
+  <div class="wrap">
+    <h1>The palette</h1>
+    <fieldset class="cvd" data-cvd-control hidden>
+      <legend>Preview with simulated color vision</legend>
+      <div class="options">
+        {
+          CVD_CHOICES.map((c) => (
+            <label>
+              <input type="radio" name="fovea-cvd" value={c.value} checked={c.value === "none"} />
+              <span>{c.label}</span>
+            </label>
+          ))
+        }
+      </div>
+      <p class="muted small">
+        Simulations use Machado et al.'s model at full severity, in linear RGB. Their tritan matrix only approximates
+        tritanopia; Fovea's tests use Brettel et al.'s model for it, which a single filter can't express.
+      </p>
+      <Sources keys={["machado2009", "brettel1997"]} />
+    </fieldset>
+
+    <nav class="jump" aria-label="Variants on this page">
+      <ul>
+        {
+          variants.map((v) => (
+            <li>
+              <a href={`#${v.id}`}>{v.name}</a>
+            </li>
+          ))
+        }
+        <li><a href="#code">Code samples</a></li>
+        <li><a href="#terminal">Terminal</a></li>
+        <li><a href="#light">Light output</a></li>
+        <li><a href="#benchmark">Benchmark</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  {
+    variants.map((v) => (
+      <section class="panel cvd-target" data-theme={v.id} id={v.id} aria-labelledby={`${v.id}-title`}>
+        <div class="wrap">
+          <h2 id={`${v.id}-title`}>{v.name}</h2>
+          <p>
+            {v.description} Neutrals: <strong>{neutralNames[v.id]}</strong>.
+          </p>
+
+          <h3>Neutrals</h3>
+          <SwatchList swatches={neutralSwatches(v)} label={`${v.name} neutrals`} />
+
+          <h3>Accents</h3>
+          <p class="muted">
+            Eight hue families, each in five tones: text (fg), strong, dim, tint and strong tint.
+          </p>
+          {accentSwatches(v).map((f) => (
+            <div class="family">
+              <h4>
+                {f.name} <span class="muted">· hue {f.hue}°</span>
+              </h4>
+              <SwatchList swatches={f.tones} label={`${v.name} ${f.name} tones`} />
+            </div>
+          ))}
+
+          <h3>Semantic</h3>
+          <SwatchList swatches={semanticSwatches(v)} label={`${v.name} semantic roles`} />
+
+          <h3>Syntax</h3>
+          <SwatchList swatches={syntaxSwatches(v)} label={`${v.name} syntax roles`} />
+
+          <h3>ANSI 16</h3>
+          <SwatchList swatches={ansiSwatches(v)} label={`${v.name} terminal colors`} />
+
+          <h3>Contrast matrix</h3>
+          <div class="table-scroll">
+            <table>
+              <caption>
+                {v.name}: text roles on each surface, as perceptual contrast (Lc) and WCAG 2 ratio
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Text</th>
+                  {MATRIX_SURFACES.map((s) => (
+                    <th scope="col">{s}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {contrastMatrix(v).map((row) => (
+                  <tr>
+                    <th scope="row">{row.text}</th>
+                    {row.cells.map((c) => (
+                      <td>{formatContrast(c)}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    ))
+  }
+
+  <div class="wrap">
+    <section id="code" aria-labelledby="code-title" class="cvd-target">
+      <h2 id="code-title">Code samples</h2>
+      <p>
+        Highlighted by Shiki with the VS Code themes the build generates, in the variant you've chosen at the top of
+        the page.
+      </p>
+      <div class="samples">
+        {showcase().map((s) => <CodeBlock code={s.code} lang={s.language.id} title={s.title} />)}
+      </div>
+    </section>
+
+    <section id="terminal" aria-labelledby="terminal-title" class="cvd-target">
+      <h2 id="terminal-title">Terminal</h2>
+      <p>The same 16 ANSI colors in Ghostty, VS Code's terminal and the iTerm2 schemes.</p>
+      <div class="terminals">
+        {transcripts().map((t) => <TerminalMock transcript={t.text} title={t.command} />)}
+      </div>
+    </section>
+
+    <section id="light" aria-labelledby="light-title">
+      <h2 id="light-title">Light output</h2>
+      <p>
+        An estimate of the light each variant sends to your eyes at the same screen brightness, from the palette's
+        model of a typical editor layout (area-weighted mean relative luminance). By this estimate, Night emits about
+        {nightSaving}% less light than Dusk.
+      </p>
+      <div class="table-scroll narrow">
+        <table>
+          <caption>Modelled light output relative to Day</caption>
+          <thead>
+            <tr><th scope="col">Variant</th><th scope="col">Relative light output</th></tr>
+          </thead>
+          <tbody>
+            {
+              light.map((l) => (
+                <tr>
+                  <th scope="row">{l.v.name}</th>
+                  <td>{(l.share * 100).toFixed(1)}%</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="note">
+        This is a model, not a measurement, and the theme is only part of the picture: your screen's brightness setting
+        and the room's lighting matter more than any color choice. See the <a href={url("comfort/")}>comfort guide</a>.
+      </p>
+      <Sources keys={["brown2022", "schollhorn2023"]} />
+    </section>
+
+    <section id="benchmark" aria-labelledby="benchmark-title">
+      <h2 id="benchmark-title">Benchmark: default text on its own background</h2>
+      <p>
+        Data only, for comparison. Other themes' values come from their official sources and were recomputed with the
+        same code as Fovea's; negative Lc means light text on a dark background. Higher is not automatically better:
+        Fovea's dark variants deliberately cap text contrast.
+      </p>
+      <div class="table-scroll">
+        <table>
+          <caption>Plain text on the editor background</caption>
+          <thead>
+            <tr>
+              <th scope="col">Theme</th>
+              <th scope="col">Text</th>
+              <th scope="col">Background</th>
+              <th scope="col">Perceptual contrast (Lc)</th>
+              <th scope="col">WCAG 2</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              [...foveaRows, ...benchmarkRows].map((r) => (
+                <tr>
+                  <th scope="row">{r.theme}</th>
+                  <td><code>{r.text}</code></td>
+                  <td><code>{r.background}</code></td>
+                  <td>{r.lc}</td>
+                  <td>{r.wcag}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="muted">
+        Sources for each theme's colors are listed in the
+        <a href={dossierUrl("benchmark-default-text-on-its-own-background")}>research dossier</a> on GitHub.
+      </p>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .cvd {
+    margin: 1.5rem 0;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--fovea-border);
+    border-radius: var(--radius);
+    background: var(--fovea-surface-popup);
+  }
+
+  .cvd[hidden] {
+    display: none;
+  }
+
+  .cvd legend {
+    padding: 0 0.4rem;
+    font-weight: 700;
+    color: var(--fovea-text-strong);
+  }
+
+  .options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+
+  .options label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.25rem;
+    cursor: pointer;
+  }
+
+  .options input {
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: var(--fovea-accent);
+  }
+
+  .small {
+    font-size: 0.9rem;
+  }
+
+  .jump ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .panel {
+    margin-top: 2.5rem;
+    padding: 0.5rem 0 1.5rem;
+    background: var(--fovea-surface-editor);
+    color: var(--fovea-text);
+    border-block: 1px solid var(--fovea-border);
+  }
+
+  .panel h2 {
+    margin-top: 1.25rem;
+  }
+
+  .family h4 {
+    margin: 1rem 0 0;
+    font-size: 1rem;
+  }
+
+  .samples,
+  .terminals {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
+  }
+
+  .narrow table {
+    min-width: 0;
+  }
+</style>
